@@ -1,0 +1,25 @@
+{
+  "fixture_id": "legacy-v1-refs",
+  "body_schema_version": 1,
+  "body_json": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "content": [
+          { "type": "text", "text": "Image:" },
+          { "type": "imageRef", "attrs": { "asset_id": "01234567-89ab-4cde-8fab-0123456789ab" } },
+          { "type": "text", "text": " Note:" },
+          { "type": "noteLink", "attrs": { "target_note_id": "99999999-8888-4777-8666-555555555555" } }
+        ]
+      }
+    ]
+  },
+  "expected_body_text": "Image: Note:99999999-8888-4777-8666-555555555555",
+  "expected_image_refs": [
+    { "asset_id": "01234567-89ab-4cde-8fab-0123456789ab" }
+  ],
+  "expected_note_links": [
+    { "target_note_id": "99999999-8888-4777-8666-555555555555" }
+  ]
+}

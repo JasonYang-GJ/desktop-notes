@@ -1,0 +1,11 @@
+[package]
+name = "s10-hotkey-clipboard"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+desktop-notes-core = { path = "../../crates/desktop-notes-core" }
+desktop-notes-windows = { path = "../../crates/desktop-notes-windows" }
+windows-sys.workspace = true

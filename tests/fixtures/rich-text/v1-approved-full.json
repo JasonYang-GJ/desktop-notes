@@ -1,0 +1,76 @@
+{
+  "fixture_id": "v1-approved-full",
+  "body_schema_version": 1,
+  "body_json": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "heading",
+        "attrs": { "level": 2 },
+        "content": [
+          { "type": "text", "text": "S04 Contract", "marks": [{ "type": "bold" }] }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          { "type": "text", "text": "Read " },
+          {
+            "type": "text",
+            "text": "official docs",
+            "marks": [{ "type": "link", "attrs": { "href": "https://tiptap.dev/docs/editor/api/utilities/html" } }]
+          },
+          { "type": "text", "text": " and " },
+          {
+            "type": "noteLink",
+            "attrs": {
+              "target_note_id": "11111111-2222-4333-8444-555555555555",
+              "display_text": "Linked note"
+            }
+          },
+          { "type": "text", "text": " safely." },
+          {
+            "type": "imageRef",
+            "attrs": {
+              "asset_id": "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee",
+              "display_width": 320
+            }
+          }
+        ]
+      },
+      {
+        "type": "bulletList",
+        "content": [
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Bullet one" }] }] },
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Bullet two" }] }] }
+        ]
+      },
+      {
+        "type": "orderedList",
+        "attrs": { "start": 3 },
+        "content": [
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Third" }] }] },
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Fourth" }] }] }
+        ]
+      },
+      {
+        "type": "taskList",
+        "content": [
+          { "type": "taskItem", "attrs": { "checked": true }, "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Done" }] }] },
+          { "type": "taskItem", "attrs": { "checked": false }, "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Pending" }] }] }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "content": [{ "type": "text", "text": "const safe = true;" }]
+      }
+    ]
+  },
+  "expected_body_text": "S04 Contract\nRead official docs and Linked note safely.\nBullet one\nBullet two\nThird\nFourth\n[x] Done\n[ ] Pending\nconst safe = true;",
+  "expected_image_refs": [
+    { "asset_id": "aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee", "display_width": 320 }
+  ],
+  "expected_note_links": [
+    { "target_note_id": "11111111-2222-4333-8444-555555555555", "display_text": "Linked note" }
+  ]
+}

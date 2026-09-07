@@ -1,0 +1,16 @@
+{
+  "fixture_id": "migration-failure-v1",
+  "body_schema_version": 1,
+  "body_json": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "content": [
+          { "type": "text", "text": "Keep original even when migration fails." },
+          { "type": "imageRef", "attrs": { "display_width": 320 } }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "fixture_id": "invalid-unknown-node",
+  "body_schema_version": 1,
+  "body_json": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "content": [
+          { "type": "text", "text": "Known text" },
+          { "type": "mysteryNode", "attrs": { "payload": "must not silently survive" } }
+        ]
+      }
+    ]
+  }
+}

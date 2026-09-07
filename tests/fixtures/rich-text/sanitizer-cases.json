@@ -1,0 +1,201 @@
+[
+  {
+    "id": "approved-formatting",
+    "html": "<h2><strong>Heading</strong></h2><p><a href=\"https://example.com/docs\">Docs</a> <a data-note-id=\"11111111-2222-4333-8444-555555555555\" data-display-text=\"Linked note\">Linked note</a><img data-asset-id=\"aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee\" data-display-width=\"320\"></p><ul><li>One</li></ul><ol start=\"2\"><li>Two</li></ol><ul data-type=\"taskList\"><li data-type=\"taskItem\" data-checked=\"true\">Done</li></ul><pre><code>safe()</code></pre>",
+    "expected_disposition": "accepted",
+    "expected_body_text": "Heading\nDocs Linked note\nOne\nTwo\n[x] Done\nsafe()",
+    "expected_event_codes": []
+  },
+  {
+    "id": "script-rejected",
+    "html": "<p>Before</p><script>alert('x')</script><p>After</p>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["ACTIVE_CONTENT_ELEMENT"]
+  },
+  {
+    "id": "iframe-rejected",
+    "html": "<iframe src=\"https://example.com\">fallback</iframe>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["ACTIVE_CONTENT_ELEMENT"]
+  },
+  {
+    "id": "style-element-rejected",
+    "html": "<style>body{background:url(https://tracker.invalid)}</style><p>Text</p>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["ACTIVE_CONTENT_ELEMENT"]
+  },
+  {
+    "id": "style-attribute-stripped",
+    "html": "<p style=\"position:fixed;color:red\">Visible text</p>",
+    "expected_disposition": "downgraded",
+    "expected_body_text": "Visible text",
+    "expected_event_codes": ["STYLE_ATTRIBUTE_STRIPPED"]
+  },
+  {
+    "id": "remote-image-rejected",
+    "html": "<p>Text<img src=\"https://tracker.invalid/pixel.png\"></p>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["UNTRUSTED_IMAGE_SOURCE"]
+  },
+  {
+    "id": "absolute-path-image-rejected",
+    "html": "<img src=\"file:///blocked-local-image.png\">",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["UNTRUSTED_IMAGE_SOURCE"]
+  },
+  {
+    "id": "unknown-node-downgraded-to-text",
+    "html": "<p>Before <mystery-widget secret=\"ignored\">KEEP THIS TEXT</mystery-widget> after</p>",
+    "expected_disposition": "downgraded",
+    "expected_body_text": "Before KEEP THIS TEXT after",
+    "expected_event_codes": ["UNKNOWN_ELEMENT_DOWNGRADED"]
+  },
+  {
+    "id": "javascript-link-rejected",
+    "html": "<p><a href=\"javascript:alert(1)\">do not run</a></p>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["UNSAFE_LINK_TARGET"]
+  },
+  {
+    "id": "template-nested-script-rejected",
+    "html": "<template><script>alert('hidden')</script>KEEP</template>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["ACTIVE_CONTENT_ELEMENT"]
+  },
+  {
+    "id": "template-nested-iframe-rejected",
+    "html": "<section><template><iframe src=\"https://example.invalid\">HIDDEN FALLBACK</iframe></template></section>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["ACTIVE_CONTENT_ELEMENT"]
+  },
+  {
+    "id": "template-inert-text-preserved",
+    "html": "<p>Before</p><template><span>KEEP TEMPLATE TEXT</span></template><p>After</p>",
+    "expected_disposition": "downgraded",
+    "expected_body_text": "Before\nKEEP TEMPLATE TEXT\nAfter",
+    "expected_event_codes": ["UNKNOWN_ELEMENT_DOWNGRADED"]
+  },
+  {
+    "id": "list-item-nested-style-recorded",
+    "html": "<ul><li style=\"color:red\">KEEP</li></ul>",
+    "expected_disposition": "downgraded",
+    "expected_body_text": "KEEP",
+    "expected_event_codes": ["STYLE_ATTRIBUTE_STRIPPED"]
+  },
+  {
+    "id": "pre-code-nested-style-recorded",
+    "html": "<pre><code style=\"color:red\">KEEP</code></pre>",
+    "expected_disposition": "downgraded",
+    "expected_body_text": "KEEP",
+    "expected_event_codes": ["STYLE_ATTRIBUTE_STRIPPED"]
+  },
+  {
+    "id": "empty-bullet-list-rejected",
+    "html": "<ul></ul>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["EMPTY_LIST_REJECTED"]
+  },
+  {
+    "id": "noncanonical-image-width-rejected",
+    "html": "<p><img data-asset-id=\"aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee\" data-display-width=\"320px\"></p>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["INVALID_IMAGE_REF_WIDTH"]
+  },
+  {
+    "id": "noncanonical-ordered-list-start-rejected",
+    "html": "<ol start=\"2junk\"><li>KEEP</li></ol>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["INVALID_ORDERED_LIST_START"]
+  },
+  {
+    "id": "invalid-task-checked-rejected",
+    "html": "<ul data-type=\"taskList\"><li data-type=\"taskItem\" data-checked=\"yes\">KEEP</li></ul>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["INVALID_TASK_ITEM_CHECKED"]
+  },
+  {
+    "id": "task-item-outside-task-list-rejected",
+    "html": "<ul><li data-type=\"taskItem\" data-checked=\"false\">KEEP</li></ul>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["INVALID_TASK_ITEM_CONTEXT"]
+  },
+  {
+    "id": "task-list-item-missing-contract-attrs-rejected",
+    "html": "<ul data-type=\"taskList\"><li>KEEP</li></ul>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["INVALID_TASK_ITEM_CONTEXT", "INVALID_TASK_ITEM_CHECKED"]
+  },
+  {
+    "id": "list-unknown-sibling-rejected",
+    "html": "<ul><li>KEEP A</li><mystery>KEEP B</mystery></ul>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["INVALID_LIST_CONTENT"]
+  },
+  {
+    "id": "list-direct-text-around-item-rejected",
+    "html": "<ul>KEEP BEFORE<li>KEEP ITEM</li>KEEP AFTER</ul>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["INVALID_LIST_CONTENT"]
+  },
+  {
+    "id": "list-item-multiple-paragraphs-rejected",
+    "html": "<ul><li><p>KEEP FIRST</p><p>KEEP SECOND</p></li></ul>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["MULTI_PARAGRAPH_LIST_ITEM_REJECTED"]
+  },
+  {
+    "id": "list-item-heading-rejected",
+    "html": "<ul><li><h2>KEEP HEADING</h2></li></ul>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["UNSUPPORTED_LIST_ITEM_BLOCK_HEADING"]
+  },
+  {
+    "id": "list-item-paragraph-code-rejected",
+    "html": "<ul><li><p>KEEP PARAGRAPH</p><pre>KEEP CODE</pre></li></ul>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["UNSUPPORTED_LIST_ITEM_BLOCK_CODEBLOCK"]
+  },
+  {
+    "id": "list-template-sibling-rejected",
+    "html": "<ul><li>KEEP ITEM</li><template><span>KEEP TEMPLATE</span></template></ul>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["INVALID_LIST_CONTENT"]
+  },
+  {
+    "id": "pre-image-reference-rejected",
+    "html": "<pre><span data-node=\"imageRef\" data-asset-id=\"aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee\"></span>KEEP</pre>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["UNSUPPORTED_CODE_BLOCK_CONTENT"]
+  },
+  {
+    "id": "pre-unknown-element-rejected",
+    "html": "<pre><mystery>KEEP UNKNOWN</mystery></pre>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["UNSUPPORTED_CODE_BLOCK_CONTENT"]
+  },
+  {
+    "id": "inline-code-context-downgraded",
+    "html": "<p><code>KEEP INLINE CODE</code></p>",
+    "expected_disposition": "downgraded",
+    "expected_body_text": "KEEP INLINE CODE",
+    "expected_event_codes": ["INLINE_CODE_DOWNGRADED"]
+  },
+  {
+    "id": "mark-on-image-reference-rejected",
+    "html": "<p><strong><span data-node=\"imageRef\" data-asset-id=\"aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee\"></span></strong></p>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["MARK_ON_ATOM_NOT_SUPPORTED"]
+  },
+  {
+    "id": "complex-note-link-rejected",
+    "html": "<p><a data-note-id=\"11111111-2222-4333-8444-555555555555\" data-display-text=\"NOTE\"><strong>NOTE</strong></a></p>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["NOTE_LINK_COMPLEX_CONTENT"]
+  },
+  {
+    "id": "asset-metadata-wrong-context-rejected",
+    "html": "<p><span data-asset-id=\"aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee\">KEEP</span></p>",
+    "expected_disposition": "rejected",
+    "expected_event_codes": ["INVALID_ATOM_METADATA_CONTEXT"]
+  }
+]

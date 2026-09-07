@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://desktop-notes.local/contracts/ipc/foundation-v1.schema.json",
+  "title": "Desktop Notes B01 Foundation IPC",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ok", "status"],
+      "properties": {
+        "ok": { "const": true },
+        "status": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "protocolVersion",
+            "ready",
+            "view",
+            "databaseState",
+            "schemaVersion",
+            "encryption"
+          ],
+          "properties": {
+            "protocolVersion": { "const": 1 },
+            "ready": { "const": true },
+            "view": { "const": "today_normal_empty" },
+            "databaseState": { "enum": ["fresh", "reopened"] },
+            "schemaVersion": { "type": "integer", "minimum": 1 },
+            "encryption": { "const": "sqlcipher" }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ok", "error"],
+      "properties": {
+        "ok": { "const": false },
+        "error": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["code", "message", "recoverable"],
+          "properties": {
+            "code": {
+              "enum": [
+                "KEY_UNAVAILABLE",
+                "DATABASE_WRONG_KEY",
+                "DATABASE_CORRUPTED",
+                "DATABASE_SCHEMA_TOO_NEW",
+                "MIGRATION_FAILED",
+                "DATA_ROOT_UNAVAILABLE",
+                "DISK_FULL",
+                "WEBVIEW_UNAVAILABLE",
+                "INTERNAL_ERROR"
+              ]
+            },
+            "message": { "type": "string", "minLength": 1, "maxLength": 200 },
+            "recoverable": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  ]
+}

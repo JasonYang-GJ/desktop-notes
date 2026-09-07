@@ -1,0 +1,28 @@
+[package]
+name = "desktop-notes-desktop"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[build-dependencies]
+tauri-build.workspace = true
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
+
+[dependencies]
+base64.workspace = true
+desktop-notes-core = { path = "../../../crates/desktop-notes-core" }
+desktop-notes-infra = { path = "../../../crates/desktop-notes-infra" }
+desktop-notes-windows = { path = "../../../crates/desktop-notes-windows" }
+serde.workspace = true
+serde_json.workspace = true
+tauri.workspace = true
+tauri-plugin-global-shortcut.workspace = true
+tauri-runtime.workspace = true
+
+[[bin]]
+name = "desktop-notes"
+path = "src/main.rs"

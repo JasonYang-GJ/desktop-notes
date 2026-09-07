@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Desktop Notes",
+  "version": "0.1.0",
+  "identifier": "com.yuanshu.desktopnotes",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://127.0.0.1:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [
+      {
+        "label": "main",
+        "title": "桌面笔记",
+        "width": 960,
+        "height": 780,
+        "minWidth": 288,
+        "minHeight": 112,
+        "dragDropEnabled": false,
+        "center": true,
+        "resizable": true,
+        "fullscreen": false,
+        "transparent": true,
+        "generalAutofillEnabled": false,
+        "backgroundColor": "#00000000"
+      }
+    ],
+    "security": {
+      "freezePrototype": true,
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' ipc: http://ipc.localhost; object-src 'none'; base-uri 'none'; frame-src 'none'; frame-ancestors 'none'; form-action 'none'"
+    }
+  },
+  "bundle": {
+    "active": false
+  }
+}

@@ -1,0 +1,96 @@
+name: 持续集成
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    name: Windows x64 验证
+    runs-on: windows-2022
+    timeout-minutes: 120
+
+    steps:
+      - name: 检出源码
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: 配置 Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 20.12.2
+          package-manager-cache: false
+
+      - name: 配置 Rust
+        shell: pwsh
+        run: |
+          rustup toolchain install 1.98.0 --profile minimal --component rustfmt,clippy
+          rustup default 1.98.0
+          rustc --version
+          cargo --version
+
+      - name: 配置短 ASCII Cargo 目标目录
+        shell: pwsh
+        run: |
+          $driveRoot = [System.IO.Path]::GetPathRoot($env:RUNNER_TEMP)
+          "CARGO_TARGET_DIR=$(Join-Path $driveRoot 'desktop-notes-ci-checks')" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: 安装锁定的前端依赖
+        working-directory: apps/desktop
+        run: npm ci
+
+      - name: 构建前端生产版本
+        working-directory: apps/desktop
+        run: npm run build
+
+      - name: 检查 Rust 格式
+        run: cargo fmt --all -- --check
+
+      - name: 运行 Rust Clippy
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+
+      - name: 运行 Rust 测试
+        run: cargo test --workspace --locked
+
+      - name: 检查前端代码规范
+        working-directory: apps/desktop
+        run: npm run lint
+
+      - name: 检查前端类型
+        working-directory: apps/desktop
+        run: npm run typecheck
+
+      - name: 运行前端测试
+        working-directory: apps/desktop
+        run: npm test
+
+      - name: 验证生产 SQLCipher 源码
+        shell: pwsh
+        run: ./scripts/test-production-sqlcipher-vendor.ps1
+
+      - name: 验证第三方声明
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path artifacts/ci | Out-Null
+          ./scripts/new-production-rust-notices.ps1 -OutputPath artifacts/ci/THIRD-PARTY-NOTICES.txt
+          $expected = (Get-FileHash -Algorithm SHA256 THIRD-PARTY-NOTICES.txt).Hash
+          $actual = (Get-FileHash -Algorithm SHA256 artifacts/ci/THIRD-PARTY-NOTICES.txt).Hash
+          if ($actual -ne $expected) { throw "THIRD-PARTY-NOTICES.txt is stale." }
+
+      - name: 构建生产 Release
+        shell: pwsh
+        run: |
+          $driveRoot = [System.IO.Path]::GetPathRoot($env:RUNNER_TEMP)
+          $targetRoot = Join-Path $driveRoot 'desktop-notes-ci-release'
+          ./scripts/run-production-dependency-build.ps1 -TargetRoot $targetRoot -Offline

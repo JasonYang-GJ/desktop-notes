@@ -1,0 +1,13 @@
+{
+  "fixture_id": "legacy-v1-minimal",
+  "body_schema_version": 1,
+  "body_json": {
+    "type": "doc",
+    "content": [
+      { "type": "paragraph", "content": [{ "type": "text", "text": "Old fixture remains readable." }] }
+    ]
+  },
+  "expected_body_text": "Old fixture remains readable.",
+  "expected_image_refs": [],
+  "expected_note_links": []
+}

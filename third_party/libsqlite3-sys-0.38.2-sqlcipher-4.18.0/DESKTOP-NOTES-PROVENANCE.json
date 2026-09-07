@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "generatedAtUtc": "2026-09-07T00:00:00Z",
+  "generator": "scripts/new-production-sqlcipher-vendor.ps1",
+  "baseCrate": {
+    "name": "libsqlite3-sys",
+    "version": "0.38.2",
+    "url": "https://crates.io/api/v1/crates/libsqlite3-sys/0.38.2/download",
+    "archiveSha256": "F1D20BEF17F513B9B3004532233187769CD072D790971F4E4DA0E346EB6401E8"
+  },
+  "sqlcipher": {
+    "edition": "Community",
+    "version": "4.18.0",
+    "sqliteVersion": "3.53.4",
+    "url": "https://github.com/sqlcipher/sqlcipher/archive/refs/tags/v4.18.0.tar.gz",
+    "archiveSha256": "1DF02D1B346FA27FEAF2DA2CB2C0D8209E788248E461EC288718AA5D3E9643E5",
+    "tag": "v4.18.0",
+    "tagObject": "dca3c1ee114fe6bf5d996fc71f3c5380f43cc82c",
+    "commit": "63697beb0fafcb61faa7a3e6fd267036548ab11b",
+    "generatedFiles": {
+      "sqlite3.c": "964C72BD1D3E031862588202E2BF6342D36EC68A2CAE4F4276D9CD79E6571ACB",
+      "sqlite3.h": "8A9D1BFF44D75174CA6DEA3EA9BAC50A6104D86FACB566647B8BB839375B7B3A",
+      "sqlite3ext.h": "AC9645E5C9FF0CF176EFDD6E75CB5E98F46295D38E02DB5C4D208826A39AB4BE",
+      "LICENSE": "2A2826F6ACF46FA650730CF42CBB22A642BE33A7EF119C9C4F4BF6DAF3BEF48E"
+    }
+  },
+  "normalBuildRequiresNetwork": false,
+  "normalBuildRequiresGenerationTools": false
+}

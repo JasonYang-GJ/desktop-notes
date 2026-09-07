@@ -1,0 +1,33 @@
+# Preserve upstream generated/vendor bytes exactly; their hashes are the authority.
+third_party/** -text -whitespace
+THIRD-PARTY-NOTICES.txt text eol=lf
+
+# Public archives contain only the maintained product, public tests, release
+# documentation, and reproducible production-build helpers. Private planning,
+# raw verification history, and host-specific harnesses remain in this private
+# development repository but never enter `git archive` output.
+Desktop-Notes-Architecture-Spec-V1.md export-ignore
+Desktop-Notes-Architecture-Spec-V1.1-Gate-Revision.md export-ignore
+Desktop-Notes-Implementation-Plan-V1.md export-ignore
+Desktop-Notes-Implementation-Plan-V1.1-Gate-Revision.md export-ignore
+Desktop-Notes-Product-Spec-V1.md export-ignore
+OPEN_SOURCE_LICENSE_DECISION.md export-ignore
+docs/adr/ export-ignore
+docs/architecture-revisions/ export-ignore
+docs/gates/ export-ignore
+docs/implementation/ export-ignore
+docs/p0/ export-ignore
+docs/rc/ export-ignore
+docs/spikes/ export-ignore
+docs/releases/v0.1.0-beta.1-manifest.json export-ignore
+scripts/** export-ignore
+scripts/get-production-dependency-baseline.ps1 -export-ignore
+scripts/new-production-rust-notices.ps1 -export-ignore
+scripts/run-production-dependency-build.ps1 -export-ignore
+scripts/test-production-sqlcipher-vendor.ps1 -export-ignore
+spikes/DV-01-sqlcipher-build/ export-ignore
+spikes/S01-sqlcipher-build/ export-ignore
+spikes/S03-key-wrap/ export-ignore
+spikes/S04-rich-text-schema/ export-ignore
+spikes/S05-encrypted-image-chain/ export-ignore
+spikes/S07-window-materials/ export-ignore

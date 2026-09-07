@@ -1,0 +1,290 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://desktop-notes.local/contracts/rich-text/tiptap-v1.schema.json",
+  "title": "Desktop Notes Tiptap JSON body schema v1 candidate",
+  "description": "S04 candidate contract for body_schema_version=1. This is candidate evidence, not a final ADR.",
+  "$ref": "#/$defs/doc",
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+    },
+    "boldMark": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "bold" }
+      },
+      "additionalProperties": false
+    },
+    "linkMark": {
+      "type": "object",
+      "required": ["type", "attrs"],
+      "properties": {
+        "type": { "const": "link" },
+        "attrs": {
+          "type": "object",
+          "required": ["href"],
+          "properties": {
+            "href": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048,
+              "pattern": "^(?:[Hh][Tt][Tt][Pp][Ss]?://|[Mm][Aa][Ii][Ll][Tt][Oo]:)"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "mark": {
+      "oneOf": [
+        { "$ref": "#/$defs/boldMark" },
+        { "$ref": "#/$defs/linkMark" }
+      ]
+    },
+    "plainText": {
+      "type": "object",
+      "required": ["type", "text"],
+      "properties": {
+        "type": { "const": "text" },
+        "text": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "text": {
+      "type": "object",
+      "required": ["type", "text"],
+      "properties": {
+        "type": { "const": "text" },
+        "text": { "type": "string", "minLength": 1 },
+        "marks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/mark" },
+          "maxItems": 2,
+          "uniqueItems": true,
+          "allOf": [
+            {
+              "contains": { "$ref": "#/$defs/boldMark" },
+              "minContains": 0,
+              "maxContains": 1
+            },
+            {
+              "contains": { "$ref": "#/$defs/linkMark" },
+              "minContains": 0,
+              "maxContains": 1
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "imageRef": {
+      "type": "object",
+      "required": ["type", "attrs"],
+      "properties": {
+        "type": { "const": "imageRef" },
+        "attrs": {
+          "type": "object",
+          "required": ["asset_id"],
+          "properties": {
+            "asset_id": { "$ref": "#/$defs/uuid" },
+            "display_width": {
+              "type": "integer",
+              "minimum": 48,
+              "maximum": 4096
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "noteLink": {
+      "type": "object",
+      "required": ["type", "attrs"],
+      "properties": {
+        "type": { "const": "noteLink" },
+        "attrs": {
+          "type": "object",
+          "required": ["target_note_id"],
+          "properties": {
+            "target_note_id": { "$ref": "#/$defs/uuid" },
+            "display_text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "inline": {
+      "oneOf": [
+        { "$ref": "#/$defs/text" },
+        { "$ref": "#/$defs/imageRef" },
+        { "$ref": "#/$defs/noteLink" }
+      ]
+    },
+    "paragraph": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "paragraph" },
+        "content": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/inline" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "heading": {
+      "type": "object",
+      "required": ["type", "attrs"],
+      "properties": {
+        "type": { "const": "heading" },
+        "attrs": {
+          "type": "object",
+          "required": ["level"],
+          "properties": {
+            "level": { "type": "integer", "enum": [1, 2, 3, 4, 5, 6] }
+          },
+          "additionalProperties": false
+        },
+        "content": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/inline" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "codeBlock": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "const": "codeBlock" },
+        "content": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/plainText" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "listItem": {
+      "type": "object",
+      "required": ["type", "content"],
+      "properties": {
+        "type": { "const": "listItem" },
+        "content": {
+          "type": "array",
+          "prefixItems": [{ "$ref": "#/$defs/paragraph" }],
+          "items": { "$ref": "#/$defs/listBlock" },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "taskItem": {
+      "type": "object",
+      "required": ["type", "attrs", "content"],
+      "properties": {
+        "type": { "const": "taskItem" },
+        "attrs": {
+          "type": "object",
+          "required": ["checked"],
+          "properties": {
+            "checked": { "type": "boolean" }
+          },
+          "additionalProperties": false
+        },
+        "content": {
+          "type": "array",
+          "prefixItems": [{ "$ref": "#/$defs/paragraph" }],
+          "items": { "$ref": "#/$defs/listBlock" },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "bulletList": {
+      "type": "object",
+      "required": ["type", "content"],
+      "properties": {
+        "type": { "const": "bulletList" },
+        "content": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/listItem" },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "orderedList": {
+      "type": "object",
+      "required": ["type", "content"],
+      "properties": {
+        "type": { "const": "orderedList" },
+        "attrs": {
+          "type": "object",
+          "required": ["start"],
+          "properties": {
+            "start": { "type": "integer", "minimum": 1, "maximum": 1000000 }
+          },
+          "additionalProperties": false
+        },
+        "content": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/listItem" },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "taskList": {
+      "type": "object",
+      "required": ["type", "content"],
+      "properties": {
+        "type": { "const": "taskList" },
+        "content": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/taskItem" },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "listBlock": {
+      "oneOf": [
+        { "$ref": "#/$defs/bulletList" },
+        { "$ref": "#/$defs/orderedList" },
+        { "$ref": "#/$defs/taskList" }
+      ]
+    },
+    "block": {
+      "oneOf": [
+        { "$ref": "#/$defs/paragraph" },
+        { "$ref": "#/$defs/heading" },
+        { "$ref": "#/$defs/bulletList" },
+        { "$ref": "#/$defs/orderedList" },
+        { "$ref": "#/$defs/taskList" },
+        { "$ref": "#/$defs/codeBlock" }
+      ]
+    },
+    "doc": {
+      "type": "object",
+      "required": ["type", "content"],
+      "properties": {
+        "type": { "const": "doc" },
+        "content": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/block" },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
